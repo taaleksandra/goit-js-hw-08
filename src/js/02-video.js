@@ -7,11 +7,16 @@ const iframe = document.querySelector('iframe');
 const player = new Player(iframe);
 
 //saving current time to local storage
-const currentTime = throttle(data => {
+const currentTime = data => {
   localStorage.setItem('videoplayer-current-time', data.seconds);
-}, 1000);
 
-player.on('timeupdate', currentTime);
+  if (data.duration === data.seconds) {
+    data.seconds = 0;
+    localStorage.setItem('videoplayer-current-time', data.seconds);
+  }
+};
+
+player.on('timeupdate', throttle(currentTime, 1000));
 
 player
   .setCurrentTime(localStorage.getItem('videoplayer-current-time'))
